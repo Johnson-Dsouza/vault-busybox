@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: busybox
+  labels:
+    app: busybox
+spec:
+  selector:
+    matchLabels:
+      app: busybox
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/role: 'myapp'
+        vault.hashicorp.com/agent-pre-populate-only: 'true'
+        vault.hashicorp.com/agent-inject-secret-config.txt: 'kv/data/target'
+        vault.hashicorp.com/agent-inject-template-config.txt: |
+          {{ with secret "kv/data/target" }}
+          [DEFAULT]
+          LogLevel = DEBUG
+          [DATABASE]
+          Address=127.0.0.1
+          Port=3306
+          name={{ .Data.data.name }}
+          age={{ .Data.data.age }}
+          Database=app
+          {{ end }}
+      labels:
+        app: busybox
+    spec:
+      serviceAccountName: vault-auth
+      containers:
+        - name: busybox
+          image: busybox
