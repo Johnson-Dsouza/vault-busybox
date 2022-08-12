@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp
+  namespace: default
+  annotations:
+    vault.hashicorp.com/agent-inject: 'true'
+    vault.hashicorp.com/role: 'myapp'
+    vault.hashicorp.com/agent-inject-secret-secrets.txt: 'kv/data/target'      
+spec:
+  containers:
+  - image: busybox:latest
+    name: busybox
+  serviceAccountName: vault-auth
