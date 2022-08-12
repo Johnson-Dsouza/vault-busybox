@@ -10,6 +10,6 @@ metadata:
     vault.hashicorp.com/agent-inject-secret-secrets.txt: 'kv/data/target'      
 spec:
   containers:
-  - image: busybox:latest
+  - image: busybox
     name: busybox
   serviceAccountName: vault-auth
